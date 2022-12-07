@@ -16,4 +16,8 @@ public class Chrome {
 		WebDriver chromeDriver = CreateChromeDriver();
 		chromeDriver.get(url);
 	}
+	
+	private void MaximizeWindow(WebDriver driver) {
+		driver.manage().window().maximize();
+	}
 }
