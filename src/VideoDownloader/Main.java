@@ -1,16 +1,29 @@
 package VideoDownloader;
 
+import java.util.Scanner;
+
 import org.openqa.selenium.WebDriver;
 
 public class Main {
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws InterruptedException {
 		// TODO Auto-generated method stub
 		
 			Chrome chrome = new Chrome();
 			WebDriver chromeDriver = chrome.CreateChromeDriver();
+			
+			Scanner scanner = new Scanner(System.in);
+			
+			System.out.println("What do you want to search?: ");
+			String userInput = scanner.nextLine();
+			System.out.println("How many videos do you want? ");
+ 			
+			
 			Youtube youtube = new Youtube();
-			youtube.SearchAndGetVideos("https://www.youtube.com/results?search_query=hi",chromeDriver);
+			youtube.getYoutubeVideos(userInput,chromeDriver);
+			
+			//Instagram instagram = new Instagram();
+			//instagram.getInstagramVideos("hi",chromeDriver);
 	}
 
 }

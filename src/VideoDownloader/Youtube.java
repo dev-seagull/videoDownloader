@@ -12,11 +12,10 @@ import org.openqa.selenium.chrome.ChromeDriver;
 
 public class Youtube{
 	
-	Chrome chrome = new Chrome();
-	
-	public void SearchAndGetVideos(String searchURL,WebDriver driver) throws InterruptedException{
-		driver.get(searchURL);
+	public void getYoutubeVideos(String userInput,WebDriver driver) throws InterruptedException{
+		String keyword = userInput.replace(' ', '+');  
 		
+		driver.get("https://www.youtube.com/results?search_query="+keyword);
 		
 		int counter=0;
 		while(counter<100) {
@@ -41,7 +40,7 @@ public class Youtube{
 	}
 	
 	
-	private void DownloadVideos() {
+	private void DownloadYoutubeVideos() {
 		
 	}
 }
