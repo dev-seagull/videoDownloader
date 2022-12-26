@@ -17,10 +17,11 @@ public class Main {
 			System.out.println("What do you want to search?: ");
 			String userInput = scanner.nextLine();
 			System.out.println("How many videos do you want? ");
+			Integer numberOfVideos = Integer.parseInt(scanner.next()); 
  			
 			
 			Youtube youtube = new Youtube();
-			youtube.getYoutubeVideos(userInput,chromeDriver);
+			youtube.getYoutubeVideos(userInput,chromeDriver,numberOfVideos);
 			
 			//Instagram instagram = new Instagram();
 			//instagram.getInstagramVideos("hi",chromeDriver);
