@@ -24,11 +24,14 @@ public class Main {
 			String destination = scanner.nextLine();
  			
 			
-			Youtube youtube = new Youtube();
-			youtube.DownloadYoutubeVideos(userInput,chromeDriver,numberOfVideos,destination);
+			//Youtube youtube = new Youtube();
+			//youtube.DownloadYoutubeVideos(userInput,chromeDriver,numberOfVideos,destination);
 			
 			//Instagram instagram = new Instagram();
 			//instagram.getInstagramVideos("hi",chromeDriver);
+			
+			Tiktok tiktok = new Tiktok();
+			tiktok.DownloadTiktokVideos(userInput, chromeDriver, numberOfVideos,destination);
 	}
 
 }
