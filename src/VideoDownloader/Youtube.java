@@ -1,61 +1,102 @@
 package VideoDownloader;
 
-import java.io.BufferedReader;
-import java.io.File;
+import java.io.BufferedWriter;
 import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
+import java.util.Scanner;
 
 import org.openqa.selenium.By;
-import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.chrome.ChromeDriver;
 
 public class Youtube{
-	
-	public void DownloadYoutubeVideos(String userInput,WebDriver driver,Integer numberOfVideos,String destination) throws InterruptedException, IOException{
-		String keyword = userInput.replace(' ', '+');  
 		
-		driver.get("https://www.youtube.com/results?search_query="+keyword);
-		
-		int counter=0;
-		while(counter<numberOfVideos) {
-			
-			List<WebElement> links = driver.findElements(By.xpath("//*[@id=\"video-title\"]"));
-			
-			for(int i=0; i<links.size() ; i++) {
-				if(links.get(i).getAttribute("href") != null) {
-					counter = counter +1;
-					if(counter == numberOfVideos+1) {
-						break;
-					}
-					else {
-						String[] command = 
-							{
-								"cmd"		
-							};
-							
-							Process process = Runtime.getRuntime().exec(command);
-							PrintWriter stdin = new PrintWriter(process.getOutputStream());
-							String url = links.get(i).getAttribute("href");
-							stdin.println("yt-dlp -q --progress --ignore-errors --no-warnings  -P "+destination+ " " +url);
-							stdin.close();
-							process.waitFor();
-					}
-				}
-			}
-			driver.findElement(By.cssSelector("body")).sendKeys(Keys.CONTROL, Keys.END);
-			
-		}
+	public void collectYoutubeVideos(String userInput,WebDriver driver,Integer numberOfVideos,String destination ) throws IOException, InterruptedException {
+
+        ArrayList<String> videoURLs = getVideosURLsOfCurrentPage(userInput,driver,numberOfVideos);
+        downloadYoutubeVideos(videoURLs, destination);
+
+    }
 	
-				
-		System.out.println(counter-1 + " youtube videos found");
-	}
+	public ArrayList<String> getVideosURLsOfCurrentPage(String userInput,WebDriver driver,Integer numberOfVideos) {
+
+        String keyword = userInput.replace(' ', '+');
+        driver.get("https://www.youtube.com/results?search_query=" + keyword);
+
+        int videoCounts = 0;
+        ArrayList<String> videoURLs = new ArrayList<String>();
+
+        while(videoCounts != numberOfVideos) {
+            List<WebElement> videoElements = driver.findElements(By.xpath("//*[@id=\"video-title\"]"));
+            for (WebElement videoElement : videoElements) {
+                String link = videoElement.getAttribute("href");
+
+                if (link != null) {
+                    videoURLs.add(link);
+                    videoCounts++;
+                }
+
+                if (videoCounts >= numberOfVideos) {
+                    break;
+                }
+
+            }
+            driver.findElement(By.cssSelector("body")).sendKeys(Keys.CONTROL, Keys.END);
+        }
+
+        return videoURLs;
+    }
 	
+	
+	 public void downloadYoutubeVideos(ArrayList<String> urls, String destination) throws IOException, InterruptedException {
+	        ProcessBuilder builder = new ProcessBuilder( "C:/Windows/System32/cmd.exe" );
+	        Process process=null;
+	        try {
+	            process = builder.start();
+	        }
+	        catch (IOException err) {
+	            System.out.println(err);
+	        }
+
+	        BufferedWriter p_stdin =
+	                new BufferedWriter(new OutputStreamWriter(process.getOutputStream()));
+
+
+	        int n= urls.size();
+	        for (String url : urls) {
+	            try {
+
+	                p_stdin.write("yt-dlp -q --progress --ignore-errors --no-warnings  -P " + destination + " " + url);
+	                p_stdin.newLine();
+	                p_stdin.flush();
+	            }
+
+	            catch (IOException err) {
+	                System.out.println(err);
+	            }
+	        }
+
+	        try {
+	            p_stdin.write("exit");
+	            p_stdin.newLine();
+	            p_stdin.flush();
+	        }
+	        catch (IOException err) {
+	            System.out.println(err);
+	        }
+
+	        Scanner executionProcessBar = new Scanner( process.getInputStream());
+	        while (executionProcessBar.hasNextLine())
+	        {
+	            System.out.println(executionProcessBar.nextLine());
+	        }
+	        executionProcessBar.close();
+
+	    }
 	
 	
 }
