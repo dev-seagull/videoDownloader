@@ -21,8 +21,8 @@ public class Main {
 	    HelpFormatter helpFormatter = new HelpFormatter();
 	    PrintWriter pw = new PrintWriter(System.out);
 	    helpFormatter.printUsage(pw,100,"java -jar VideoDownloader.jar -d [options]	");
-	    pw.println("Instruction: these options are necessary: -k, -p and -n");
-	    pw.println("For example:java -jar VideoDownloader -k chest workout -p G:\\grabvideotesting -n 3");
+	    pw.println("Instruction: these options are necessary: -d, -k, -p and -n");
+	    pw.println("For example:java -jar VideoDownloader -d -k chest workout -p G:\\grabvideotesting -n 3");
 	    helpFormatter.printOptions(pw, 100, options, 2, 5);
 	    pw.close();
 	  }
@@ -31,10 +31,10 @@ public class Main {
 		// TODO Auto-generated method stub
 			
 		    final Options options = new Options();
-		    options.addOption(new Option("d","download",false,"Downloading videos"));
-		    options.addOption(new Option("k","keyword",true,"Giving the keyword"));
-		    options.addOption(new Option("p","path",true,"where you want to save the videos"));
-		    options.addOption(new Option("n","number",true,"Number of videos you want to save"));
+		    options.addOption(new Option("d","download",false,"Downloading videos(essential)"));
+		    options.addOption(new Option("k","keyword",true,"Giving the keyword(essential)"));
+		    options.addOption(new Option("p","path",true,"where you want to save the videos(optional)"));
+		    options.addOption(new Option("n","number",true,"Number of videos you want to save(optional)"));
 		    
 		    
 		    CommandLineParser parser = new DefaultParser();
@@ -53,10 +53,18 @@ public class Main {
 			
 			Youtube youtube = new Youtube();
 			
-			if(!cmd.hasOption("k") || !cmd.hasOption("p") || !cmd.hasOption("n")) {
-				printHelp(options);
-				System.exit(-1);
+			String[] essentialFlags = {"d","k"}; 
+			
+			for(int i=0;i< essentialFlags.length;i++) {
+				if(!cmd.hasOption(essentialFlags[i])) {
+					System.out.println("You didn't give the "+essentialFlags[i]+ " flag");
+					printHelp(options);
+					System.exit(-1);
+				}
 			}
+			
+			
+			
 			
 			
 			if(cmd.hasOption("d")) {
