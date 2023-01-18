@@ -2,9 +2,6 @@ package VideoDownloader;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.Scanner;
-
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.DefaultParser;
@@ -26,18 +23,33 @@ public class Main {
 	    helpFormatter.printOptions(pw, 100, options, 2, 5);
 	    pw.close();
 	  }
+	
+	
+	public static void downloadVideos(String keyword,String path,String numberOfVideos) throws NumberFormatException, IOException, InterruptedException {
+		
+		ChromeOptions chromeOptions = new ChromeOptions();
+		chromeOptions.addArguments("--headless");
+		ChromeDriver chromeDriver = new ChromeDriver(chromeOptions);
+		
+		
+		Youtube youtube = new Youtube();
+		youtube.collectYoutubeVideos(keyword, chromeDriver, Integer.parseInt(numberOfVideos), path);
+	}
+	
+	
 
 	public static void main(String[] args) throws InterruptedException, IOException, ParseException {
 		// TODO Auto-generated method stub
 			
 		    final Options options = new Options();
-		    options.addOption(new Option("d","download",false,"Downloading videos(essential)"));
-		    options.addOption(new Option("k","keyword",true,"Giving the keyword(essential)"));
+		    options.addOption(Option.builder("d").longOpt("download").desc("Download videos(essential)").build());
+		    options.addOption(Option.builder("k").longOpt("keyword").hasArg().desc("Keyword for search(essential)").build());
 		    
 		    
-		    options.addOption(new Option("p","path",true,"where you want to save the videos(optional)"));
-		    options.addOption(new Option("n","number",true,"Number of videos you want to save(optional)"));
-		   
+		    options.addOption(Option.builder("p").longOpt("path").hasArg().desc("path to save videos(optional)").build());
+		    options.addOption(Option.builder("n").longOpt("number").hasArg().desc("Number of videos you want to download(optional)").build());
+		    options.addOption(Option.builder("h").longOpt("help").desc("Print help").build());
+		    
 		    
 		    try {
 		    	CommandLineParser parser = new DefaultParser();
@@ -45,32 +57,19 @@ public class Main {
 				
 				
 				String userInput = cmd.getOptionValue("k");
-				String destination = cmd.getOptionValue("p");
+				String path = cmd.getOptionValue("p");
 				String numberOfVideos = cmd.getOptionValue("n");
-		
+					
 				
-				ChromeOptions chromeOptions = new ChromeOptions();
-				chromeOptions.addArguments("--headless");
-				ChromeDriver chromeDriver = new ChromeDriver(chromeOptions);
-				
-				
-				Youtube youtube = new Youtube();
-				
-				
-				Option[] userInputOptions  = cmd.getOptions();
-				for(Option userInputOption: userInputOptions) {
-					String option = userInputOption.getOpt();
-					if(!options.hasOption(option)) {
-						System.out.println(option + " is not recognized as a flag");
-					}
+				if(cmd.hasOption("h")) {
+					printHelp(options);
+					System.exit(-1);
 				}
 				
-				
 				String[] essentialFlags = {"d","k"}; 
-				
-				for(int i=0;i< essentialFlags.length;i++) {
-					if(!cmd.hasOption(essentialFlags[i])) {
-						System.out.println("You didn't give the "+essentialFlags[i]+ " flag");
+				for(String essentialFlag: essentialFlags) {
+					if(!cmd.hasOption(essentialFlag)) {
+						System.out.println("You didn't give the "+essentialFlag+ " flag");
 						printHelp(options);
 						System.exit(-1);
 					}
@@ -78,28 +77,16 @@ public class Main {
 					
 				
 				if(cmd.hasOption("d")) {
-					youtube.collectYoutubeVideos(userInput,chromeDriver,Integer.parseInt(numberOfVideos),destination);
+					downloadVideos(userInput,path,numberOfVideos);
 				}
-		    }
-		    
-		    
-		    catch(Exception err) {
+				
+				
+		    } catch(Exception err) {
 		    	
 		    	System.out.println(err.getMessage());	
 		    
 		    }
 		    		
-		    
-		    
-		    
-	
-		 
-		 
-			
-			
-			
-			
-
 	}
 
 }
