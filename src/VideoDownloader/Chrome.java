@@ -10,8 +10,7 @@ public class Chrome {
 	
 	public WebDriver CreateChromeDriverObject() {
 		System.setProperty("webdriver.chrome.driver","G://Selenium jar and drivers//chromedriver/chromedriver.exe");
-		WebDriver chromeDriver = new ChromeDriver();
-		return chromeDriver;
+		return new ChromeDriver();
 	}
 	
 	

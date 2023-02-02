@@ -30,6 +30,7 @@ public class Main {
 		ChromeOptions chromeOptions = new ChromeOptions();
 		chromeOptions.addArguments("--headless");
 		ChromeDriver chromeDriver = new ChromeDriver(chromeOptions);
+		System.setProperty("webdriver.chrome.driver","G://Selenium jar and drivers//chromedriver/chromedriver.exe");
 		
 		
 		Youtube youtube = new Youtube();
@@ -46,8 +47,8 @@ public class Main {
 		    options.addOption(Option.builder("k").longOpt("keyword").hasArg().desc("Keyword for search(essential)").build());
 		    
 		    
-		    options.addOption(Option.builder("p").longOpt("path").hasArg().desc("path to save videos(optional)").build());
-		    options.addOption(Option.builder("n").longOpt("number").hasArg().desc("Number of videos you want to download(optional)").build());
+		    options.addOption(Option.builder("p").longOpt("path").hasArg().desc("path to save videos(optional, default value is set to C:\\\\VideoDownloader)").build());
+		    options.addOption(Option.builder("n").longOpt("number").hasArg().desc("Number of videos you want to download(optional, dafult value is set to 5)").build());
 		    options.addOption(Option.builder("h").longOpt("help").desc("Print help").build());
 		    
 		    
@@ -57,9 +58,17 @@ public class Main {
 				
 				
 				String userInput = cmd.getOptionValue("k");
+				
 				String path = cmd.getOptionValue("p");
+				if(path == null) {
+					path = "C:\\VideoDownloader";
+				}
+				
 				String numberOfVideos = cmd.getOptionValue("n");
-					
+				if(numberOfVideos == null) {
+					numberOfVideos = "5";
+				}
+				
 				
 				if(cmd.hasOption("h")) {
 					printHelp(options);
@@ -69,7 +78,7 @@ public class Main {
 				String[] essentialFlags = {"d","k"}; 
 				for(String essentialFlag: essentialFlags) {
 					if(!cmd.hasOption(essentialFlag)) {
-						System.out.println("You didn't give the "+essentialFlag+ " flag");
+						System.out.println("The flag "+essentialFlag+ " was not given");
 						printHelp(options);
 						System.exit(-1);
 					}

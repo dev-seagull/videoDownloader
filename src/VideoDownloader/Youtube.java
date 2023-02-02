@@ -67,6 +67,7 @@ public class Youtube{
 
 
 	        int n= urls.size();
+	        int counter =0;
 	        for (String url : urls) {
 	            try {
 
