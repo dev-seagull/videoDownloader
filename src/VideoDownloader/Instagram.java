@@ -3,12 +3,16 @@ package VideoDownloader;
 import java.util.concurrent.TimeUnit;
 
 import org.openqa.selenium.By;
+import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.time.Duration;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Scanner;
 
 
@@ -20,44 +24,44 @@ public class Instagram {
 	Chrome chrome = new Chrome();
 	
 	
-	public void Login(WebDriver driver) {
+	public void getInstagramVideos(String keyword,WebDriver driver) throws InterruptedException {
 	
-		driver.get("http://www.instagram.com");
+		driver.get("https://www.google.com");
 		
 		WebDriverWait wait = new WebDriverWait(driver,Duration.ofSeconds(30));
 		
+		WebElement searchBar = wait.until(ExpectedConditions.elementToBeClickable(By.name("q")));
+		searchBar.sendKeys(keyword + " site:www.instagram.com");
+		searchBar.submit();
 		
-		WebElement username = wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector("input[name='username']")));
-		WebElement password = wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector("input[type='password']")));
-		
-		
-		System.out.print("Enter your username:");
-		String usernameInput = input.nextLine();
-
-		System.out.print("Enter your Password:");
-		String passwordInput = input.nextLine();
-		
-		username.clear();
-		username.sendKeys(usernameInput);
-		driver.manage().timeouts().implicitlyWait(4,TimeUnit.SECONDS);
-		
-		password.clear();
-		password.sendKeys(passwordInput);
-		driver.manage().timeouts().implicitlyWait(7,TimeUnit.SECONDS);
-		
-		WebElement loginButton = driver.findElement(By.cssSelector("button[type='submit'"));
-		loginButton.click();
-		driver.manage().timeouts().implicitlyWait(12,TimeUnit.SECONDS);
+		WebElement videosTab = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//*[@id=\"hdtb-msb\"]/div[1]/div/div[2]/a")));
+		videosTab.click();
 		
 		
-		//WebElement not_now = driver.findElement(By.xpath("/html/body/div[2]/div/div/div/div[1]/div/div/div/div[1]/div[1]/div[2]/section/main/div/div/div/div/button"));
-		//not_now.click();
-		//driver.manage().timeouts().implicitlyWait(13,TimeUnit.SECONDS);
+		Thread.sleep(6000);
+		
+		ArrayList<WebElement> links = new ArrayList<WebElement>();
+		
+		for(int i=1;i<10;i++) {
+			WebElement link = driver.findElement(By.xpath("//*[@id='rso']/div[" + String.valueOf(i) + "]/div/div/div/video-voyager/div/div[1]/a"));
+			links.add(link);
+		}
+		                                                  
+		
+		int counter =0;
+		for(int i=0;i<links.size();i++) {
+			System.out.println(links.get(i).getAttribute("href"));
+			counter = counter +1;
+		}
+		System.out.println(counter+"videos found");
+		
+		
+		int pageCounter = 0;
+		driver.findElement(By.cssSelector("body")).sendKeys(Keys.CONTROL, Keys.END);
+		WebElement page2 = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//*[@id=\"botstuff\"]/div/div[2]/table/tbody/tr/td[3]/a")));
+		driver.get(page2.getAttribute("href"));
+	
 	}
 	
-	
-	public void SearchAndGetVideos(String url, WebDriver driver) {
-		
-	}
 	
 }
