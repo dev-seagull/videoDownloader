@@ -7,6 +7,8 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
@@ -93,7 +95,14 @@ public class Youtube{
 	        Scanner executionProcessBar = new Scanner( process.getInputStream());
 	        while (executionProcessBar.hasNextLine())
 	        {
-	            System.out.println(executionProcessBar.nextLine());
+	        	String line = executionProcessBar.nextLine();
+	            Pattern pattern = Pattern.compile("([0-9]{1,3})%");
+	            Matcher matcher = pattern.matcher(line);
+	            if (matcher.find() && Integer.parseInt(matcher.group(1)) == 100) {
+	                counter++;
+	                System.out.println(counter + " out of " + n + " videos downloaded");
+	            }
+	            System.out.println(line);
 	        }
 	        executionProcessBar.close();
 
