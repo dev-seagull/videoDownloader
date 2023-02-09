@@ -17,9 +17,9 @@ public class Main {
 	public static void printHelp(Options options) {
 	    HelpFormatter helpFormatter = new HelpFormatter();
 	    PrintWriter pw = new PrintWriter(System.out);
-	    helpFormatter.printUsage(pw,100,"java -jar VideoDownloader.jar -d [options]	");
-	    pw.println("Instruction: these options are necessary: -d, -k, -p and -n");
-	    pw.println("For example:java -jar VideoDownloader -d -k chest workout -p G:\\grabvideotesting -n 3");
+	    helpFormatter.printUsage(pw,100,"VideoDownloader [options]");
+	    pw.println("For example:VideoDownloader -k chest workout");
+	    pw.println("For getting more information in details use -h: VideDownloader -h");
 	    helpFormatter.printOptions(pw, 100, options, 2, 5);
 	    pw.close();
 	  }
@@ -43,13 +43,14 @@ public class Main {
 		// TODO Auto-generated method stub
 			
 		    final Options options = new Options();
-		    options.addOption(Option.builder("d").longOpt("download").desc("Download videos(essential)").build());
 		    options.addOption(Option.builder("k").longOpt("keyword").hasArg().desc("Keyword for search(essential)").build());
 		    
 		    
 		    options.addOption(Option.builder("p").longOpt("path").hasArg().desc("path to save videos(optional, default value is set to C:\\\\VideoDownloader)").build());
 		    options.addOption(Option.builder("n").longOpt("number").hasArg().desc("Number of videos you want to download(optional, dafult value is set to 5)").build());
 		    options.addOption(Option.builder("h").longOpt("help").desc("Print help").build());
+		    
+		    
 		    
 		    
 		    try {
@@ -75,7 +76,7 @@ public class Main {
 					System.exit(-1);
 				}
 				
-				String[] essentialFlags = {"d","k"}; 
+				String[] essentialFlags = {"k"}; 
 				for(String essentialFlag: essentialFlags) {
 					if(!cmd.hasOption(essentialFlag)) {
 						System.out.println("The flag "+essentialFlag+ " was not given");
@@ -83,11 +84,8 @@ public class Main {
 						System.exit(-1);
 					}
 				}
-					
 				
-				if(cmd.hasOption("d")) {
-					downloadVideos(userInput,path,numberOfVideos);
-				}
+				downloadVideos(userInput, path, numberOfVideos);
 				
 				
 		    } catch(Exception err) {
