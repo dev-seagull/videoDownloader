@@ -9,10 +9,20 @@ import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
+import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
+import org.slf4j.LoggerFactory;
+
+import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+
 
 public class Main {
+
+
 	
 	public static void printHelp(Options options) {
 	    HelpFormatter helpFormatter = new HelpFormatter();
@@ -27,8 +37,15 @@ public class Main {
 	
 	public static void downloadVideos(String keyword,String path,String numberOfVideos) throws NumberFormatException, IOException, InterruptedException {
 		
+	
+
+		
+        Logger.getLogger("org.openqa.selenium").setLevel(Level.OFF);
+    
 		ChromeOptions chromeOptions = new ChromeOptions();
+	    chromeOptions.addArguments("--remote-allow-origins=*");
 		chromeOptions.addArguments("--headless");
+		System.setProperty("webdriver.chrome.silentOutput", "true");
 		ChromeDriver chromeDriver = new ChromeDriver(chromeOptions);
 		System.setProperty("webdriver.chrome.driver","G://Selenium jar and drivers//chromedriver/chromedriver.exe");
 		

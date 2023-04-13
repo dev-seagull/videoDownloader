@@ -1,7 +1,9 @@
 package VideoDownloader;
 
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.util.ArrayList;
@@ -17,6 +19,8 @@ import org.openqa.selenium.WebElement;
 
 public class Youtube{
 		
+	
+	
 	public void collectYoutubeVideos(String userInput,WebDriver driver,Integer numberOfVideos,String destination ) throws IOException, InterruptedException {
 
         ArrayList<String> videoURLs = getVideosURLsOfCurrentPage(userInput,driver,numberOfVideos);
@@ -34,6 +38,10 @@ public class Youtube{
 
         while(videoCounts != numberOfVideos) {
             List<WebElement> videoElements = driver.findElements(By.xpath("//*[@id=\"video-title\"]"));
+            if (videoElements.isEmpty()) {
+                break;
+            }
+
             for (WebElement videoElement : videoElements) {
                 String link = videoElement.getAttribute("href");
 
@@ -49,64 +57,61 @@ public class Youtube{
             }
             driver.findElement(By.cssSelector("body")).sendKeys(Keys.CONTROL, Keys.END);
         }
-
+        
+        driver.close();
         return videoURLs;
     }
 	
 	
 	 public void downloadYoutubeVideos(ArrayList<String> urls, String destination) throws IOException, InterruptedException {
-	        ProcessBuilder builder = new ProcessBuilder( "C:/Windows/System32/cmd.exe" );
-	        Process process=null;
-	        try {
-	            process = builder.start();
-	        }
-	        catch (IOException err) {
-	            System.out.println(err);
-	        }
-
-	        BufferedWriter p_stdin =
-	                new BufferedWriter(new OutputStreamWriter(process.getOutputStream()));
-
-
+	
+	       
 	        int n= urls.size();
 	        int counter =0;
 	        for (String url : urls) {
-	            try {
-
-	                p_stdin.write("yt-dlp -q --progress --ignore-errors --no-warnings  -P " + destination + " " + url);
-	                p_stdin.newLine();
-	                p_stdin.flush();
-	            }
-
-	            catch (IOException err) {
+	        	
+	        	try {
+	       	        
+	        		
+	        		Process process = Runtime.getRuntime().exec("yt-dlp -q --progress --ignore-errors --no-warnings  -P " + destination + " " + url);
+	    			
+	    			BufferedReader Input = new BufferedReader(new InputStreamReader(process.getInputStream()));
+	    			BufferedReader err = new BufferedReader(new InputStreamReader(process.getErrorStream()));
+	    			
+	    			String line = null;
+	    			while ((line = Input.readLine()) != null) {   
+	    			    Pattern pattern = Pattern.compile("([0-9]{1,3})%");
+	    			    Matcher matcher = pattern.matcher(line);
+	    			    if (matcher.find() && Integer.parseInt(matcher.group(1)) == 100) {
+	  	    	            counter++;
+	  	    	            System.out.println(counter + " out of " + n + " videos downloaded");
+	  	    	         }
+	    			   
+	    			    
+	    			    System.out.println(line);
+	    			    
+	    			}
+	        		
+	       	                   
+	                
+	    			while ((line = err.readLine()) != null) {
+	                    System.out.println("Here is the standard error of the command (if any):\n");
+	                    System.out.println(line);
+	                }
+	                
+	                
+	                
+	                
+	                
+	            } catch (IOException err) {
 	                System.out.println(err);
 	            }
-	        }
-
-	        try {
-	            p_stdin.write("exit");
-	            p_stdin.newLine();
-	            p_stdin.flush();
-	        }
-	        catch (IOException err) {
-	            System.out.println(err);
-	        }
-
-	        Scanner executionProcessBar = new Scanner( process.getInputStream());
-	        while (executionProcessBar.hasNextLine())
-	        {
-	        	String line = executionProcessBar.nextLine();
-	            Pattern pattern = Pattern.compile("([0-9]{1,3})%");
-	            Matcher matcher = pattern.matcher(line);
-	            if (matcher.find() && Integer.parseInt(matcher.group(1)) == 100) {
-	                counter++;
-	                System.out.println(counter + " out of " + n + " videos downloaded");
-	            }
-	            System.out.println(line);
-	        }
-	        executionProcessBar.close();
+	            
+	  
+	   
+	  
 
 	    }
 	
-	
+	 }
 }
